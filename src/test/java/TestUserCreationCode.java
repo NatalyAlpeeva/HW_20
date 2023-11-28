@@ -6,14 +6,17 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
 
 public class TestUserCreationCode {
+    @BeforeClass
+    public static void cleanUp() {
+        new UserEndPoint().deleteUser("Vasya");
+    }
 
     @Test
     public void verifyUserCanBeCreated() {
         User currentUser = new User();
-        currentUser.setId(3);
+        currentUser.setId(1);
         currentUser.setUserName("Vasya");
         currentUser.setFirstName("Vasya");
         currentUser.setLastName("Tymchenko");
@@ -33,17 +36,19 @@ public class TestUserCreationCode {
     @Test
     public void verifyUserHasIdAfterCreation() {
         User user = new User();
-        user.setUserName("Vasya");
-        user.setId(5);
-        user.setFirstName("Vasya");
-        user.setLastName("Tymchenko");
-        user.setEmail("vasya@ukr.net");
-        user.setPassword("vasya");
-        user.setPhone("555555");
+        user.setUserName("asya");
+        user.setId(3);
+        user.setFirstName("asya");
+        user.setLastName("Tmchenko");
+        user.setEmail("asya@ukr.net");
+        user.setPassword("asya");
+        user.setPhone("5588575555");
         user.setUserStatus(0);
 
-        Response userResponse = new UserEndPoint()
+      new UserEndPoint()
                 .createUser(user);
+      Response userResponse = new UserEndPoint()
+              .getUser(user.getUserName());
 
         User userFromService = userResponse.body().as(User.class);
         Assert.assertNotNull(userFromService);
@@ -54,28 +59,28 @@ public class TestUserCreationCode {
     @Test
     public void verifyUserCanBeDeleted() throws InterruptedException {
         User currentUser = new User();
-        currentUser.setUserName("Vasya");
+        currentUser.setUserName("Tasya");
         currentUser.setId(2);
-        currentUser.setFirstName("Vasya");
+        currentUser.setFirstName("Tasya");
         currentUser.setLastName("Tymchenko");
-        currentUser.setEmail("vasya@ukr.net");
-        currentUser.setPassword("vasya");
-        currentUser.setPhone("555555");
+        currentUser.setEmail("tasya@ukr.net");
+        currentUser.setPassword("tasya");
+        currentUser.setPhone("554555555");
         currentUser.setUserStatus(0);
 
         Response userResponse = new UserEndPoint()
                 .createUser(currentUser);
-        String createdUserName = userResponse
+
+        Response responseGet = new UserEndPoint()
+                .getUser(currentUser.getUserName());
+
+        User userResponseGet = responseGet
                 .body()
-                .as(User.class)
-                .getUserName();
-        User userCreatedFromService = new UserEndPoint()
-                .getUser(createdUserName)
                 .as(User.class);
 
-        new UserEndPoint().deleteUser(userCreatedFromService.getUserName());
+        new UserEndPoint().deleteUser(userResponseGet.getUserName());
 
-        Response userByUserName = new UserEndPoint().getUser(String.valueOf(userCreatedFromService.getUserName()));
+        Response userByUserName = new UserEndPoint().getUser(String.valueOf(userResponseGet.getUserName()));
 
         Assertions.assertThat(userByUserName.statusCode()).isEqualTo(404);
 

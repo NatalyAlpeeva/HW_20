@@ -5,6 +5,7 @@ import io.restassured.specification.RequestSpecification;
 import models.User;
 
 public class UserEndPoint {
+
     public Response createUser(User user) {
         return  given()
                 .body(user)
